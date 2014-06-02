@@ -10,4 +10,7 @@
 
 `. ./server.sh 8080` server start at http://localhost:8080 and open browser
 
+# dependency
+nodejs version 0.10+
+
 #licence MIT
