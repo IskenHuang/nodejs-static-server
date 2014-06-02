@@ -1,4 +1,8 @@
 # nodejs static server
+====================
+
+Simple nodejs static server
+
 
 # how to use
 `node server` server start at http://localhost:3000
