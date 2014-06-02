@@ -1,5 +1,4 @@
 # nodejs static server
-====================
 
 Simple nodejs static server
 
@@ -16,5 +15,7 @@ Simple nodejs static server
 
 # dependency
 nodejs version 0.10+
+
+# [integration with dotfile](https://github.com/IskenHuang/dotfiles/blob/master/.functions)
 
 #licence MIT
