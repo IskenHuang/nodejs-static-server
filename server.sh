@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# nodejs static server
+port="${1:-3000}"
+open "http://localhost:${port}/"
+echo "Static file server running at => http://localhost:${port}"
+echo "CTRL + C to shutdown"
+node -e 'var http=require("http"),url=require("url"),path=require("path"),fs=require("fs"),port=process.argv[1]||3000,backName="<<",log=function(r,e){var t=200===e?"\x1b[32m":"\x1b[31m";console.log("\x1b[36m",r.method,t,e,"\x1b[0m",r.url)},errorResponse=function(r,e,t,n){var o={"Content-Type":"text/plain"},s=404===r?"404 Not Found\n":n+"\n";log(e,r),t.writeHead(r,o),t.write(s),t.end()},normalResponse=function(r,e,t,n){var o={"Access-Control-Allow-Origin":"*"};log(r,200),e.writeHead(200,o),e.write(t,n),e.end()};http.createServer(function(r,e){var t=url.parse(r.url).pathname,n=path.join(process.cwd(),t);fs.exists(n,function(t){if(!t)return void errorResponse(404,r,e);var o=fs.statSync(n).isDirectory();o?fs.readdir(n,function(t,o){if(t)return errorResponse(500,r,e,t);var s="<html><head><style>body{margin:0;}.content{list-style:none;padding:10px;}.row{height:30px;line-height:30px}.row:hover{background-color:#f1f1f1}</style></head><body><ul class=\"content\">",a=function(e,t){t=t||e;var n="<li class=\"row\">";return n+="<a href=\""+r.url+t+"\">",n+=e,n+="</a></li>"};s+="/"===r.url?"":a(backName,"..");for(var i=0;i<o.length;i++){var l=o[i];l+=fs.statSync(n+l).isDirectory()?"/":"",s+=a(l)}return s+="</ul></body></html>",normalResponse(r,e,s)}):fs.readFile(n,"binary",function(t,n){return t?errorResponse(500,r,e,t):normalResponse(r,e,n,"binary")})})}).listen(parseInt(port,10));' "$port"
