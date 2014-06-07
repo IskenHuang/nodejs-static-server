@@ -100,12 +100,20 @@ http.createServer(function(req, res) {
                 return normalResponse(req, res, html);
             });
         }else{
-            fs.readFile(filename, 'binary', function(err, file) {
-                if(err) {
-                    return errorResponse(500, req, res, err);
-                }
+            var readStream = fs.createReadStream( filename, {
+                flags: 'r',
+                encoding: 'utf8',
+                fd: null,
+                mode: 0666,
+                autoClose: true
+            });
 
-                return normalResponse(req, res, file, 'binary');
+            readStream.on('open', function () {
+                readStream.pipe(res);
+            });
+
+            readStream.on('error', function(err) {
+                errorResponse( 500, req, res, err);
             });
         }
     });
