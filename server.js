@@ -109,6 +109,8 @@ http.createServer(function(req, res) {
             });
 
             readStream.on('open', function () {
+                var baseName = path.basename(filename);
+                res.setHeader('Content-disposition', 'attachment; filename=' + baseName);
                 readStream.pipe(res);
             });
 
