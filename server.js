@@ -78,7 +78,9 @@ var http = require('http'),
         'png',
         'gif',
         'webp',
-        'webm'
+        'webm',
+
+        'md'
     ];
 
 http.createServer(function(req, res) {
