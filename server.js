@@ -56,7 +56,30 @@ var http = require('http'),
         res.write( body, type);
         res.end();
         return;
-    };
+    },
+    fileextensions = [
+        // html
+        'html',
+        'htm',
+
+        // js
+        'js',
+        'jsx',
+
+        // css
+        'css',
+        'less',
+        'sass',
+        'scss',
+
+        // images
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'webp',
+        'webm'
+    ];
 
 http.createServer(function(req, res) {
 
@@ -100,23 +123,36 @@ http.createServer(function(req, res) {
                 return normalResponse(req, res, html);
             });
         }else{
-            var readStream = fs.createReadStream( filename, {
-                flags: 'r',
-                encoding: 'utf8',
-                fd: null,
-                mode: 0666,
-                autoClose: true
-            });
+            var _regexp = new RegExp('\.(' + fileextensions.join('|') + ')$', 'i'),
+                isRender = filename.match(_regexp);
 
-            readStream.on('open', function () {
-                var baseName = path.basename(filename);
-                res.setHeader('Content-disposition', 'attachment; filename=' + baseName);
-                readStream.pipe(res);
-            });
+            if(isRender) {
+                fs.readFile(filename, 'binary', function(err, file) {
+                    if(err) {
+                        return errorResponse(500, req, res, err);
+                    }
 
-            readStream.on('error', function(err) {
-                errorResponse( 500, req, res, err);
-            });
+                    return normalResponse(req, res, file, 'binary');
+                });
+            }else{
+                var readStream = fs.createReadStream( filename, {
+                    flags: 'r',
+                    encoding: 'utf8',
+                    fd: null,
+                    mode: 0666,
+                    autoClose: true
+                });
+
+                readStream.on('open', function () {
+                    var baseName = path.basename(filename);
+                    res.setHeader('Content-disposition', 'attachment; filename=' + baseName);
+                    readStream.pipe(res);
+                });
+
+                readStream.on('error', function(err) {
+                    errorResponse( 500, req, res, err);
+                });
+            }
         }
     });
 }).listen(parseInt(port, 10));
